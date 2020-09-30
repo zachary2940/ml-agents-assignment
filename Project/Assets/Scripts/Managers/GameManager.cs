@@ -8,7 +8,8 @@ public class GameManager : MonoBehaviour
     //public Turret _turret;
     public Vector3 _center;
     public GameObject _turretPrefab;
-    //public TankManager _tankManager;
+    public TankManager _tankManager;
+    private Turret turret;
 
 
     //private int[] mWinHistory;
@@ -27,11 +28,8 @@ public class GameManager : MonoBehaviour
         //mWinHistory = new int[_tankManager.NumberOfPlayers];
 
         // make the object face the center
-        Quaternion rot = Quaternion.FromToRotation(Vector3.forward,Vector3.forward);
-        GameObject turretObj = Instantiate(_turretPrefab, _center, rot);
-        Turret turret = turretObj.GetComponent<Turret>();
-        turret.dOnTurretDestroyed = OnTurretDestroyedGM;
-        turret.dOnTurretWon = OnTurretWonGM;
+
+
         Debug.Log("started GM");
 
         state = State.GamePrep;
@@ -72,8 +70,12 @@ public class GameManager : MonoBehaviour
     private void InitGamePrep()
     {
         // Initialize all tanks
-        //_tankManager.Restart();
-
+        _tankManager.Restart();
+        Quaternion rot = Quaternion.FromToRotation(Vector3.forward, Vector3.forward);
+        GameObject turretObj = Instantiate(_turretPrefab, _center, rot);
+        this.turret = turretObj.GetComponent<Turret>();
+        turret.dOnTurretDestroyed = OnTurretDestroyedGM;
+        turret.dOnTurretWon = OnTurretWonGM;
         // Change state to game loop
         state = State.GameLoop;
     }

@@ -29,6 +29,9 @@ TagManager:
   - symbol_O_Goal
   - purpleAgent
   - purpleGoal
+  - Tank
+  - EnemyTank
+  - FriendlyTank
   layers:
   - Default
   - TransparentFX

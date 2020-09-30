@@ -394,6 +394,7 @@ GameObject:
   - component: {fileID: 8321321694785016690}
   - component: {fileID: 3765252927884928793}
   - component: {fileID: 4182147287751379096}
+  - component: {fileID: 3780162257517224554}
   m_Layer: 9
   m_Name: Turret
   m_TagString: Player
@@ -654,13 +655,16 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
-  _rotationSpeed: 90
+  _rotationSpeed: 180
   _inputIsEnabled: 1
-  _maxEnemyCounter: 10
+  _maxFFCounter: 2
+  tankFFCounter: 0
+  _maxEnemyCounter: 1
   tankEnemyCounter: 0
-  _maxFriendlyCounter: 2
+  _maxFriendlyCounter: 10
   tankFriendlyCounter: 0
   _maxFireDistance: 2.5
+  _center: {x: 0, y: 0, z: 0}
   _layerMask:
     serializedVersion: 2
     m_Bits: 512
@@ -676,7 +680,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b2a40628a1fea5448926add949858b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cooldown: 0.5
+  _cooldown: 0.75
   _shellPrefab: {fileID: 5204955365232478723, guid: 568c4d887383b55409d4855e3228b738,
     type: 3}
   _spawnPoint: {fileID: 482793051333797799}
@@ -693,11 +697,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 1
+    VectorObservationSize: 4
     NumStackedVectorObservations: 1
-    VectorActionSize: 01000000
+    VectorActionSize: 02000000
     VectorActionDescriptions: []
-    VectorActionSpaceType: 0
+    VectorActionSpaceType: 1
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 1
@@ -719,9 +723,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SensorName: RayPerceptionSensor
-  m_DetectableTags: []
-  m_RaysPerDirection: 0
-  m_MaxRayDegrees: 70
+  m_DetectableTags:
+  - EnemyTank
+  - FriendlyTank
+  m_RaysPerDirection: 16
+  m_MaxRayDegrees: 180
   m_SphereCastRadius: 0.5
   m_RayLength: 20
   m_RayLayerMask:
@@ -732,3 +738,17 @@ MonoBehaviour:
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
   m_StartVerticalOffset: 0
   m_EndVerticalOffset: 0
+--- !u!114 &3780162257517224554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8170894129406994214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DecisionPeriod: 5
+  TakeActionsBetweenDecisions: 1

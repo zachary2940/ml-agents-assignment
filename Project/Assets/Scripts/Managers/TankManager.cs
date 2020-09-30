@@ -26,7 +26,7 @@ public class TankManager : MonoBehaviour
     };
 
     //protected int mPlayerCount;
-    //protected List<Tank> mTanks = new List<Tank>();
+    protected List<GameObject> mTanks = new List<GameObject>();
     //protected List<Transform> mSpawnPoints = new List<Transform>();
 
     private void Awake()
@@ -56,6 +56,8 @@ public class TankManager : MonoBehaviour
         // make the object face the center
         Quaternion rot = Quaternion.FromToRotation(Vector3.forward, center - pos);
         GameObject tankobj = Instantiate(prefab, pos, rot);
+        mTanks.Add(tankobj);
+
         Tank tank = tankobj.GetComponent<Tank>();
 
         if (enemy)
@@ -63,15 +65,18 @@ public class TankManager : MonoBehaviour
             MeshRenderer[] renderers = tank.GetComponentsInChildren<MeshRenderer>();
             foreach (MeshRenderer rend in renderers)
                 rend.material.color = colors[0];
+            tankobj.tag = "EnemyTank";
+
         }
         else
         {
             MeshRenderer[] renderers = tank.GetComponentsInChildren<MeshRenderer>();
             foreach (MeshRenderer rend in renderers)
                 rend.material.color = colors[1];
+            tankobj.tag = "FriendlyTank";
         }
         tank.enemy = enemy;
-        
+
     }
 
 
@@ -114,15 +119,21 @@ public class TankManager : MonoBehaviour
 
     public void Restart()
     {
-        //foreach (Tank tank in mTanks)
-        //{
-        //    //int num = tank._playerNum;
-        //    int num = 0;
-        //    tank.Restart(mSpawnPoints[num].position, mSpawnPoints[num].rotation);
-        //}
-        //mPlayerCount = mTanks.Count;
+        foreach (GameObject tank in mTanks)
+        {
+            //int num = tank._playerNum;
+            //int num = 0;
+            //tank.Restart(mSpawnPoints[num].position, mSpawnPoints[num].rotation);
+            if (tank != null)
+            {
+                tank.SetActive(false);
+            }
 
-    }
+        }
+        friendlyTimer = 2.5f;
+        enemyTimer = 1.5f;
+    //mPlayerCount = mTanks.Count;
+}
 
     // Spawn and setup their color
     //public void SpawnTanks()
