@@ -11,7 +11,7 @@ public class TankManager : MonoBehaviour
     //public OnOneTankLeft dOnOneTankLeft = null;
 
 
-    public Vector3 _center;
+    public Vector3 _center = Vector3.zero;
     public GameObject _tankPrefab;
 
     public float friendlyTimer = 2.5f;
@@ -52,10 +52,15 @@ public class TankManager : MonoBehaviour
 
     public void Spawn(Vector3 center, GameObject prefab, bool enemy)
     {
-        Vector3 pos = RandomCircle(center, 20.0f);
+        //Vector3 pos = RandomCircle(center, 20.0f);
         // make the object face the center
-        Quaternion rot = Quaternion.FromToRotation(Vector3.forward, center - pos);
-        GameObject tankobj = Instantiate(prefab, pos, rot);
+        //Quaternion rot = Quaternion.FromToRotation(Vector3.forward, center - pos);
+        Vector3 posLocal = RandomCircle(Vector3.zero, 20.0f);
+        Quaternion rotLocal = Quaternion.FromToRotation(Vector3.forward, Vector3.zero - posLocal);
+        GameObject tankobj = Instantiate(prefab,this.transform,false);
+        tankobj.transform.localPosition = posLocal;
+        tankobj.transform.localRotation = rotLocal;
+
         mTanks.Add(tankobj);
 
         Tank tank = tankobj.GetComponent<Tank>();
@@ -127,6 +132,7 @@ public class TankManager : MonoBehaviour
             if (tank != null)
             {
                 tank.SetActive(false);
+                Destroy(tank);
             }
 
         }

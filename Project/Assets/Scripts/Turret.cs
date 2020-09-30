@@ -15,10 +15,11 @@ public class Turret : Agent
     //public AudioClip _clipTankExplode;
     //public float _pitchRange = 0.2f;
 
-    public delegate void OnTurretDestroyed(Turret turret);    // This will be called when turret is dead
-    public OnTurretDestroyed dOnTurretDestroyed;
-    public delegate void OnTurretWon(Turret turret);    // This will be called when turret is dead
-    public OnTurretWon dOnTurretWon;
+    //public delegate void OnTurretDestroyed(Turret turret);    // This will be called when turret is dead
+    //public OnTurretDestroyed dOnTurretDestroyed;
+    //public delegate void OnTurretWon(Turret turret);    // This will be called when turret is dead
+    //public OnTurretWon dOnTurretWon;
+    public TankManager _tankManager;
 
 
 
@@ -31,7 +32,7 @@ public class Turret : Agent
     public float tankEnemyCounter;
     public float _maxFriendlyCounter = 10;
     public float tankFriendlyCounter;
-    public float _maxFireDistance = 2.5f;
+    //public float _maxFireDistance = 2.5f;
     public Vector3 _center;
 
 
@@ -58,8 +59,8 @@ public class Turret : Agent
     //protected string mVerticalAxisInputName = "Vertical1";
     protected string mHorizontalAxisInputName = "Horizontal1";
     protected string mFireInputName = "Fire1";
-    protected float mVerticalInputValue = 0f;
-    protected float mHorizontalInputValue = 0f;
+    //protected float mVerticalInputValue = 0f;
+    //protected float mHorizontalInputValue = 0f;
 
 
 
@@ -74,8 +75,11 @@ public class Turret : Agent
     public override void OnEpisodeBegin()
     {
         this.mRigidbody.angularVelocity = Vector3.zero;
-        this.transform.localPosition = _center;
-
+        Quaternion rot = Quaternion.FromToRotation(Vector3.forward, Vector3.forward);
+        //GameObject turretObj = Instantiate(_turretPrefab, _center, rot);
+        this.transform.localPosition = new Vector3(0f, 0f, 0f);
+        this.transform.localRotation = rot;
+        _tankManager.Restart();
         //if (this.transform.localPosition.y < 0)
         //{
         //    this.mRigidbody.angularVelocity = Vector3.zero;
@@ -88,7 +92,7 @@ public class Turret : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        //sensor.AddObservation(_target.position); //3 for vector 3
+        sensor.AddObservation(mTurretShot._cooldown); //3 for vector 3
         sensor.AddObservation(this.transform.position);
 
         //1 vector actions
@@ -110,7 +114,7 @@ public class Turret : Agent
         float rotationDegree = _rotationSpeed * Time.deltaTime * vectorAction[0];
         Quaternion rotQuat = Quaternion.Euler(0f, rotationDegree, 0f);
         mRigidbody.MoveRotation(mRigidbody.rotation * rotQuat);
-        AddReward(-0.05f * (vectorAction[0] * vectorAction[0]));
+        //AddReward(-0.05f * (vectorAction[0] * vectorAction[0]));
         if (vectorAction[1] == 1)
         {
             FireInput();
@@ -218,6 +222,8 @@ public class Turret : Agent
 
     protected void FireRay()
     {
+        AddReward(0.5f);
+
         RaycastHit hit;
         // Does the ray intersect any objects excluding the player layer
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit,Mathf.Infinity, _layerMask))
@@ -227,12 +233,15 @@ public class Turret : Agent
             if (tank.tag == "FriendlyTank")
             {
                 Debug.Log("Hit Friendly");
-                AddReward(-2f + 0.2f * tankFFCounter + 0.01f); // the lower it is the more pain
+                AddReward(-1f); // the lower it is the more pain
                 tankFFCounter -= 1;
                 if (tankFFCounter <= 0)
                 {
-                    AddReward(-5f); // the lower it is the more pain
+                    AddReward(-1f); // the lower it is the more pain
+                    Debug.Log("Lose");
                     EndEpisode();
+                    _tankManager.Restart();
+                    Restart();
                 }
 
 
@@ -243,14 +252,14 @@ public class Turret : Agent
                 Debug.Log("Hit Enemy");
 
             }
-            AddReward(0.1f);
+            AddReward(0.5f);
             tank.SetActive(false);
             Debug.Log("Did Hit");
         }
         else
         {
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 1000, Color.white);
-            AddReward(-0.5f);
+            //AddReward(-0.5f);
             Debug.Log("Did not Hit");
         }
     }
@@ -297,14 +306,18 @@ public class Turret : Agent
     {
         if (mState != State.Inactive || mState != State.Death)
         {
-            AddReward(-5f);
+            AddReward(-1f);
             tankEnemyCounter -= 1;
             if (tankEnemyCounter <= 0)
             {
                 AddReward(-1f);
-                dOnTurretDestroyed.Invoke(this);
+                //dOnTurretDestroyed.Invoke(this);
                 gameObject.SetActive(false);
+                Debug.Log("Lose");
                 EndEpisode();
+                _tankManager.Restart();
+                Restart();
+
             }
         }
     }
@@ -318,9 +331,12 @@ public class Turret : Agent
             if (tankFriendlyCounter <= 0)
             {
                 AddReward(5f);
-                dOnTurretWon.Invoke(this);
-                gameObject.SetActive(false);
+                //dOnTurretWon.Invoke(this);
+                //gameObject.SetActive(false);
+                Debug.Log("Win");
                 EndEpisode();
+                _tankManager.Restart();
+                Restart();
             }
         }
     }
@@ -360,11 +376,13 @@ public class Turret : Agent
         StartCoroutine(ChangeState(State.Inactive, 1f));
     }
 
-    public void Restart(Vector3 pos, Quaternion rot)
+    public void Restart()
     {
         // Reset position, rotation and health
-        transform.position = pos;
-        transform.rotation = rot;
+        Quaternion rot = Quaternion.FromToRotation(Vector3.forward, Vector3.forward);
+        //GameObject turretObj = Instantiate(_turretPrefab, _center, rot);
+        this.transform.localPosition = new Vector3(0f, 0f, 0f);
+        this.transform.localRotation = rot;
         tankEnemyCounter = _maxEnemyCounter;
         tankFriendlyCounter = _maxFriendlyCounter;
         tankFFCounter = _maxFFCounter;
