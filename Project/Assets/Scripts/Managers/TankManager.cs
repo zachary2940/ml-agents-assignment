@@ -4,24 +4,30 @@ using UnityEngine;
 
 public class TankManager : MonoBehaviour
 {
-    public GameObject _spawnPointContainer;
+    //public GameObject _spawnPointContainer;
+
+
+    //public delegate void OnOneTankLeft(Tank survivor);    // This will be called when only one tank left in the scene
+    //public OnOneTankLeft dOnOneTankLeft = null;
+
+
     public Vector3 _center;
     public GameObject _tankPrefab;
 
-    public delegate void OnOneTankLeft(Tank survivor);    // This will be called when only one tank left in the scene
-    public OnOneTankLeft dOnOneTankLeft = null;
+    public float friendlyTimer = 2.5f;
+    public float enemyTimer = 1.5f;
 
-    public float _numTanks;
+    //public float _numTanks;
 
-    protected Color[] mPlayerColors =
+    protected Color[] colors =
     {
         Color.red,
         Color.blue,
     };
 
-    protected int mPlayerCount;
-    protected List<Tank> mTanks = new List<Tank>();
-    protected List<Transform> mSpawnPoints = new List<Transform>();
+    //protected int mPlayerCount;
+    //protected List<Tank> mTanks = new List<Tank>();
+    //protected List<Transform> mSpawnPoints = new List<Transform>();
 
     private void Awake()
     {
@@ -29,7 +35,7 @@ public class TankManager : MonoBehaviour
         //Transform spawnTrans = _spawnPointContainer.transform;
         //for (int i = 0; i < spawnTrans.childCount; i++)
         //    mSpawnPoints.Add(spawnTrans.GetChild(i));
-        Spawn(_center,_tankPrefab);
+        //Spawn(_center,_tankPrefab,false);
         //SpawnTanks();
     }
 
@@ -44,40 +50,78 @@ public class TankManager : MonoBehaviour
         return pos;
     }
 
-    public void Spawn(Vector3 center, GameObject prefab)
+    public void Spawn(Vector3 center, GameObject prefab, bool enemy)
     {
-        for (int i = 0; i < _numTanks; i++)
-        {
-            Vector3 pos = RandomCircle(center, 20.0f);
-            // make the object face the center
-            Quaternion rot = Quaternion.FromToRotation(Vector3.forward, center - pos);
-            Instantiate(prefab, pos, rot);
-        }
-    }
-    public void OnTankDeath(Tank target)
-    {
-        // Reduce the player count and put the dead tank to the back of the list
-        mPlayerCount--;
-        mTanks.Remove(target);
-        mTanks.Add(target);
+        Vector3 pos = RandomCircle(center, 20.0f);
+        // make the object face the center
+        Quaternion rot = Quaternion.FromToRotation(Vector3.forward, center - pos);
+        GameObject tankobj = Instantiate(prefab, pos, rot);
+        Tank tank = tankobj.GetComponent<Tank>();
 
-        // If it is the last tank standing, call delegate to announce the winner
-        if(mPlayerCount == 1)
+        if (enemy)
         {
-            dOnOneTankLeft.Invoke(mTanks[0]); // First tank is always the winner
-            mTanks[0]._inputIsEnabled = false;
+            MeshRenderer[] renderers = tank.GetComponentsInChildren<MeshRenderer>();
+            foreach (MeshRenderer rend in renderers)
+                rend.material.color = colors[0];
         }
+        else
+        {
+            MeshRenderer[] renderers = tank.GetComponentsInChildren<MeshRenderer>();
+            foreach (MeshRenderer rend in renderers)
+                rend.material.color = colors[1];
+        }
+        tank.enemy = enemy;
+        
     }
+
+
+    public void SpawnWrtTimer()
+    {
+        friendlyTimer -= Time.deltaTime;
+        enemyTimer -= Time.deltaTime;
+        if (friendlyTimer <= 0)
+        {
+            Spawn(_center, _tankPrefab, false);
+            friendlyTimer = 2.5f;
+        }
+        if (enemyTimer <= 0)
+        {
+            Spawn(_center, _tankPrefab, true);
+            enemyTimer = 1.5f;
+        }
+
+    }
+
+    public void Update()
+    {
+        SpawnWrtTimer();
+    }
+
+    //public void OnTankDeath(Tank target)
+    //{
+    //    // Reduce the player count and put the dead tank to the back of the list
+    //    mPlayerCount--;
+    //    mTanks.Remove(target);
+    //    mTanks.Add(target);
+
+    //    // If it is the last tank standing, call delegate to announce the winner
+    //    if(mPlayerCount == 1)
+    //    {
+    //        dOnOneTankLeft.Invoke(mTanks[0]); // First tank is always the winner
+    //        mTanks[0]._inputIsEnabled = false;
+    //    }
+    //}
 
     public void Restart()
     {
-        foreach (Tank tank in mTanks)
-        {
-            //int num = tank._playerNum;
-            int num = 0;
-            tank.Restart(mSpawnPoints[num].position, mSpawnPoints[num].rotation);
-        }
-        mPlayerCount = mTanks.Count;
+        //foreach (Tank tank in mTanks)
+        //{
+        //    //int num = tank._playerNum;
+        //    int num = 0;
+        //    tank.Restart(mSpawnPoints[num].position, mSpawnPoints[num].rotation);
+        //}
+        //mPlayerCount = mTanks.Count;
+
     }
 
     // Spawn and setup their color
@@ -100,20 +144,20 @@ public class TankManager : MonoBehaviour
     //    }
     //}
 
-    public Transform[] GetTanksTransform()
-    {
-        int count = mTanks.Count;
-        Transform[] tanksTrans = new Transform[count];
-        for (int i = 0; i < count; i++)
-        {
-            tanksTrans[i] = mTanks[i].transform;
-        }
+    //public Transform[] GetTanksTransform()
+    //{
+    //    int count = mTanks.Count;
+    //    Transform[] tanksTrans = new Transform[count];
+    //    for (int i = 0; i < count; i++)
+    //    {
+    //        tanksTrans[i] = mTanks[i].transform;
+    //    }
 
-        return tanksTrans;
-    }
+    //    return tanksTrans;
+    //}
 
-    public int NumberOfPlayers
-    {
-        get { return mSpawnPoints.Count; }
-    }
+    //public int NumberOfPlayers
+    //{
+    //    get { return mSpawnPoints.Count; }
+    //}
 }

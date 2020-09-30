@@ -52,7 +52,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 84
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!65 &1343619256
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -61,7 +61,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1343619255}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1.61, y: 1.7, z: 1.6}
@@ -270,8 +270,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 135f79ed8e8825948bc5229e7686e33e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 20
-  _rotationSpeed: 0
+  _moveSpeed: 2
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 512
+  _radius: 2
   _movementSFX: {fileID: 8628096002447358649}
   _tankSFX: {fileID: 3528250256390878877}
   _clipIdle: {fileID: 8300000, guid: e2522bde119563c419b553267d5da2bb, type: 3}
@@ -282,6 +285,7 @@ MonoBehaviour:
   _inputIsEnabled: 1
   _maxHealth: 100
   mHealth: 100
+  enemy: 0
 --- !u!1 &1676768259386706114
 GameObject:
   m_ObjectHideFlags: 0

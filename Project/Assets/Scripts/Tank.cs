@@ -1,11 +1,16 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Tank : MonoBehaviour
 {
-    public float _moveSpeed;
-    public float _rotationSpeed;
+    public float _moveSpeed=2f;
+    public LayerMask _layerMask;
+    public float _radius = 2.5f;
+
+
+    //public float _rotationSpeed;
     //audio clip
     public AudioSource _movementSFX;
     public AudioSource _tankSFX;
@@ -21,7 +26,7 @@ public class Tank : MonoBehaviour
     public float _maxHealth = 100;
     public float mHealth;
 
-    protected bool enemy;
+    public bool enemy;
 
     //delegate
     public delegate void TankDestroyed(Tank target);
@@ -31,7 +36,7 @@ public class Tank : MonoBehaviour
     {
         //Idle = 0,
         Moving,
-        Death,
+        //Death,
         Inactive
     };
     protected State mState;
@@ -77,14 +82,17 @@ public class Tank : MonoBehaviour
 
             //case State.TakingDamage:
             //    break;
-            case State.Death:
-                break;
+            //case State.Death:
+            //    break;
             case State.Inactive:
                 break;
             default:
                 break;
         }
     }
+
+
+
 
     //protected void MovementInput()
     //{
@@ -114,14 +122,14 @@ public class Tank : MonoBehaviour
         if(_movementSFX.clip != clip)
         {
             _movementSFX.clip = clip;
-            _movementSFX.pitch = mOriginalPitch + Random.Range(-_pitchRange, _pitchRange);
+            _movementSFX.pitch = mOriginalPitch + UnityEngine.Random.Range(-_pitchRange, _pitchRange);
             _movementSFX.Play();
         }
     }
     protected void PlaySFX(AudioClip clip)
     {
         _tankSFX.clip = clip;
-        _tankSFX.pitch = mOriginalPitch + Random.Range(-_pitchRange, _pitchRange);
+        _tankSFX.pitch = mOriginalPitch + UnityEngine.Random.Range(-_pitchRange, _pitchRange);
         _tankSFX.Play();
     }
 
@@ -129,39 +137,53 @@ public class Tank : MonoBehaviour
     void FixedUpdate()
     {
         Move();
-        Rotate();
+        //Rotate();
     }
 
     // Move the tank based on speed
     public void Move()
     {
-        Vector3 moveVect = transform.forward * _moveSpeed * Time.deltaTime * mVerticalInputValue;
+        Vector3 moveVect = transform.forward * _moveSpeed * Time.deltaTime * 1;
         mRigidbody.MovePosition(mRigidbody.position + moveVect);
     }
 
-    // Rotate the tank
-    public void Rotate()
-    {
-        float rotationDegree = _rotationSpeed * Time.deltaTime * mHorizontalInputValue;
-        Quaternion rotQuat = Quaternion.Euler(0f, rotationDegree, 0f);
-        mRigidbody.MoveRotation(mRigidbody.rotation * rotQuat);
-    }
+    //// Rotate the tank
+    //public void Rotate()
+    //{
+    //    float rotationDegree = _rotationSpeed * Time.deltaTime * mHorizontalInputValue;
+    //    Quaternion rotQuat = Quaternion.Euler(0f, rotationDegree, 0f);
+    //    mRigidbody.MoveRotation(mRigidbody.rotation * rotQuat);
+    //}
 
     public void TakeDamage(float damage)
     {
-        if (mState != State.Inactive || mState != State.Death)
+        if (mState != State.Inactive)
         {
             mHealth -= damage;
             if (mHealth <= 0)
                 state = State.Inactive;
         }
     }
-
-    protected void Death()
+    void OnTriggerEnter(Collider collision)
     {
-        PlaySFX(_clipTankExplode);
-        StartCoroutine(ChangeState(State.Inactive, 1f));
+        Tank tank = collision.gameObject.GetComponent<Tank>(); //null
+        //Check for a match with the specified name on any GameObject that collides with your GameObject
+        if (collision.gameObject.tag =="Player")
+        {
+            //state = State.Inactive;
+            gameObject.SetActive(false);
+        }
+        //Check for a match with the specific tag on any GameObject that collides with your GameObject
+        else
+        {
+            //Debug.Log("Do something else here");
+        }
     }
+    //protected void Death()
+    //{
+    //    PlaySFX(_clipTankExplode);
+    //    StartCoroutine(ChangeState(State.Inactive, 1f));
+    //}
 
     public void Restart(Vector3 pos, Quaternion rot)
     {
@@ -200,9 +222,9 @@ public class Tank : MonoBehaviour
                     case State.Moving:
                         ChangeMovementAudio(_clipMoving);
                         break;
-                    case State.Death:
-                        Death();
-                        break;
+                    //case State.Death:
+                    //    Death();
+                    //    break;
 
                     case State.Inactive:
                         gameObject.SetActive(false);
@@ -217,5 +239,10 @@ public class Tank : MonoBehaviour
                 mState = value;
             }
         }
+    }
+
+    public static implicit operator Tank(GameObject v)
+    {
+        throw new NotImplementedException();
     }
 }

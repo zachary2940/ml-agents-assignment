@@ -5,9 +5,13 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public TankManager _tankManager;
+    //public Turret _turret;
+    public Vector3 _center;
+    public GameObject _turretPrefab;
+    //public TankManager _tankManager;
 
-    private int[] mWinHistory;
+
+    //private int[] mWinHistory;
 
     public enum State
     {
@@ -20,23 +24,47 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        mWinHistory = new int[_tankManager.NumberOfPlayers];
-        _tankManager.dOnOneTankLeft = OnLastTank;
+        //mWinHistory = new int[_tankManager.NumberOfPlayers];
+
+        // make the object face the center
+        Quaternion rot = Quaternion.FromToRotation(Vector3.forward,Vector3.forward);
+        GameObject turretObj = Instantiate(_turretPrefab, _center, rot);
+        Turret turret = turretObj.GetComponent<Turret>();
+        turret.dOnTurretDestroyed = OnTurretDestroyedGM;
+        turret.dOnTurretWon = OnTurretWonGM;
+        Debug.Log("started GM");
 
         state = State.GamePrep;
     }
 
-    public void OnLastTank(Tank winner)
+    public void OnTurretDestroyedGM(Turret turret)
     {
         if (state == State.GameLoop)
         {
             // Record wins
             //int winnerPlayerNum = winner._playerNum;
-            int winnerPlayerNum = 0;
+            //int winnerPlayerNum = 0;
 
-            mWinHistory[winnerPlayerNum]++;
+            //mWinHistory[winnerPlayerNum]++;
+            Debug.Log("Lose");
 
             // End the round
+            state = State.GameEnds;
+        }
+    }
+
+    public void OnTurretWonGM(Turret turret)
+    {
+        if (state == State.GameLoop)
+        {
+            // Record wins
+            //int winnerPlayerNum = winner._playerNum;
+            //int winnerPlayerNum = 0;
+
+            //mWinHistory[winnerPlayerNum]++;
+
+            // End the round
+            Debug.Log("Win");
             state = State.GameEnds;
         }
     }
@@ -44,7 +72,7 @@ public class GameManager : MonoBehaviour
     private void InitGamePrep()
     {
         // Initialize all tanks
-        _tankManager.Restart();
+        //_tankManager.Restart();
 
         // Change state to game loop
         state = State.GameLoop;
@@ -88,3 +116,4 @@ public class GameManager : MonoBehaviour
         }
     }
 }
+
