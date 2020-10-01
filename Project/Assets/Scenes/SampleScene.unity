@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 2000611229}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.43667546, g: 0.48427135, b: 0.5645225, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2676,6 +2676,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 899054432}
     m_Modifications:
+    - target: {fileID: 3765252927884928793, guid: 213e221f4d233bd4587afcf867b735b5,
+        type: 3}
+      propertyPath: m_Model
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3765252927884928793, guid: 213e221f4d233bd4587afcf867b735b5,
+        type: 3}
+      propertyPath: m_BehaviorType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182147287751379096, guid: 213e221f4d233bd4587afcf867b735b5,
+        type: 3}
+      propertyPath: m_RaysPerDirection
+      value: 24
+      objectReference: {fileID: 0}
     - target: {fileID: 5470767950119431958, guid: 213e221f4d233bd4587afcf867b735b5,
         type: 3}
       propertyPath: _tankManager
@@ -20168,7 +20183,7 @@ Light:
   serializedVersion: 8
   m_Type: 3
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1
+  m_Intensity: 5.01
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -20203,7 +20218,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2000611228}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 43, y: 43.4, z: 48.9}
+  m_LocalPosition: {x: 43, y: 43.4, z: -8.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -20514,6 +20529,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1707688733}
     m_Modifications:
+    - target: {fileID: 3765252927884928793, guid: 213e221f4d233bd4587afcf867b735b5,
+        type: 3}
+      propertyPath: m_BehaviorType
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5470767950119431958, guid: 213e221f4d233bd4587afcf867b735b5,
         type: 3}
       propertyPath: _tankManager

@@ -656,6 +656,7 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
   _rotationSpeed: 180
+  _tankManager: {fileID: 0}
   _inputIsEnabled: 1
   _maxFFCounter: 2
   tankFFCounter: 0
@@ -663,7 +664,6 @@ MonoBehaviour:
   tankEnemyCounter: 0
   _maxFriendlyCounter: 10
   tankFriendlyCounter: 0
-  _maxFireDistance: 2.5
   _center: {x: 0, y: 0, z: 0}
   _layerMask:
     serializedVersion: 2
@@ -697,11 +697,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 4
+    VectorObservationSize: 6
     NumStackedVectorObservations: 1
-    VectorActionSize: 02000000
+    VectorActionSize: 0300000002000000
     VectorActionDescriptions: []
-    VectorActionSpaceType: 1
+    VectorActionSpaceType: 0
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
@@ -726,7 +726,7 @@ MonoBehaviour:
   m_DetectableTags:
   - EnemyTank
   - FriendlyTank
-  m_RaysPerDirection: 16
+  m_RaysPerDirection: 24
   m_MaxRayDegrees: 180
   m_SphereCastRadius: 0.5
   m_RayLength: 20

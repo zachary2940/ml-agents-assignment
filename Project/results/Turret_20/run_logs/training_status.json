@@ -1,0 +1,35 @@
+{
+    "Turret": {
+        "checkpoints": [
+            {
+                "steps": 199993,
+                "file_path": "results\\Turret_20\\Turret\\Turret-199993.nn",
+                "reward": null,
+                "creation_time": 1601527415.0081036
+            },
+            {
+                "steps": 399937,
+                "file_path": "results\\Turret_20\\Turret\\Turret-399937.nn",
+                "reward": null,
+                "creation_time": 1601529228.3373053
+            },
+            {
+                "steps": 556481,
+                "file_path": "results\\Turret_20\\Turret\\Turret-556481.nn",
+                "reward": -1.8900000117719173,
+                "creation_time": 1601530618.061344
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 556481,
+            "file_path": "results\\Turret_20\\Turret.nn",
+            "reward": -1.8900000117719173,
+            "creation_time": 1601530618.061344
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.1.0",
+        "mlagents_version": "0.20.0",
+        "tensorflow_version": "2.3.1"
+    }
+}

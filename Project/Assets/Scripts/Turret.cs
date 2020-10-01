@@ -93,10 +93,16 @@ public class Turret : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         sensor.AddObservation(mTurretShot._cooldown); //3 for vector 3
-        sensor.AddObservation(this.transform.position);
-
+        //sensor.AddObservation(this.transform.localPosition);
+        sensor.AddObservation(transform.localRotation);
         //1 vector actions
         sensor.AddObservation(mRigidbody.angularVelocity.magnitude); //1
+        //Vector3 angularMomentum = new Vector3(
+        //    mRigidbody.inertiaTensor.x * mRigidbody.angularVelocity.x,
+        //    mRigidbody.inertiaTensor.y * mRigidbody.angularVelocity.y,
+        //    mRigidbody.inertiaTensor.z * mRigidbody.angularVelocity.z
+        //);
+        //sensor.AddObservation(angularMomentum);
 
     }
 
@@ -106,18 +112,42 @@ public class Turret : Agent
         //Vector3 controlSignal = Vector3.zero;
         //controlSignal.x = vectorAction[0];
         //Vector3 rotateDir = Vector3.zero;
-        if (Mathf.Abs(vectorAction[0]) > 0.1f)
-            state = State.Moving;
-        else state = State.Idle;
+        //if (Mathf.Abs(vectorAction[0]) > 0.1f)
+        //    state = State.Moving;
+        //else state = State.Idle;
 
+        if (vectorAction[0] == 1)
+        {
+            float rotationDegree = _rotationSpeed * Time.deltaTime * -1;
+            Quaternion rotQuat = Quaternion.Euler(0f, rotationDegree, 0f);
+            mRigidbody.MoveRotation(mRigidbody.rotation * rotQuat);
+        }
+        else if (vectorAction[0] == 2)
+        {
+            float rotationDegree = _rotationSpeed * Time.deltaTime * 1;
+            Quaternion rotQuat = Quaternion.Euler(0f, rotationDegree, 0f);
+            mRigidbody.MoveRotation(mRigidbody.rotation * rotQuat);
+        }
+        else if (vectorAction[0] == 3)
+        {
+            float rotationDegree = _rotationSpeed * Time.deltaTime * 0;
+            Quaternion rotQuat = Quaternion.Euler(0f, rotationDegree, 0f);
+            mRigidbody.MoveRotation(mRigidbody.rotation * rotQuat);
+        }
+        //if (vectorAction[0] == 0)
+        //{
+        //    float rotationDegree = _rotationSpeed * Time.deltaTime * 0;
+        //    Quaternion rotQuat = Quaternion.Euler(0f, rotationDegree, 0f);
+        //    mRigidbody.MoveRotation(mRigidbody.rotation * rotQuat);
+        //}
 
-        float rotationDegree = _rotationSpeed * Time.deltaTime * vectorAction[0];
-        Quaternion rotQuat = Quaternion.Euler(0f, rotationDegree, 0f);
-        mRigidbody.MoveRotation(mRigidbody.rotation * rotQuat);
-        //AddReward(-0.05f * (vectorAction[0] * vectorAction[0]));
         if (vectorAction[1] == 1)
         {
             FireInput();
+        }
+        else if (vectorAction[1] == 0)
+        {
+
         }
 
 
@@ -140,8 +170,27 @@ public class Turret : Agent
 
     public override void Heuristic(float[] actionsOut)
     {
-        actionsOut[0] = Input.GetAxis("Horizontal1");
-        actionsOut[1] = Input.GetAxis("Fire1");
+
+        if (Input.GetKey(KeyCode.D))
+        {
+            actionsOut[0] = 1;
+        }
+        else if (Input.GetKey(KeyCode.A))
+        {
+            actionsOut[0] = 2;
+        }
+        else if (Input.GetKey(KeyCode.Q))
+        {
+            actionsOut[0] = 3;
+        }
+        if (Input.GetKey(KeyCode.E))
+        {
+            actionsOut[1] = 1;
+        }
+        else
+        {
+            actionsOut[1] = 0;
+        }
 
     }
     /// <summary>
@@ -222,18 +271,16 @@ public class Turret : Agent
 
     protected void FireRay()
     {
-        AddReward(0.5f);
-
         RaycastHit hit;
         // Does the ray intersect any objects excluding the player layer
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit,Mathf.Infinity, _layerMask))
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit,50, _layerMask))
         {
-            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.red);
             GameObject tank = hit.transform.gameObject;
             if (tank.tag == "FriendlyTank")
             {
                 Debug.Log("Hit Friendly");
-                AddReward(-1f); // the lower it is the more pain
+                AddReward(-0.5f); // the lower it is the more pain
                 tankFFCounter -= 1;
                 if (tankFFCounter <= 0)
                 {
@@ -252,14 +299,13 @@ public class Turret : Agent
                 Debug.Log("Hit Enemy");
 
             }
-            AddReward(0.5f);
+            AddReward(0.1f);
             tank.SetActive(false);
             Debug.Log("Did Hit");
         }
         else
         {
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 1000, Color.white);
-            //AddReward(-0.5f);
             Debug.Log("Did not Hit");
         }
     }
@@ -306,7 +352,6 @@ public class Turret : Agent
     {
         if (mState != State.Inactive || mState != State.Death)
         {
-            AddReward(-1f);
             tankEnemyCounter -= 1;
             if (tankEnemyCounter <= 0)
             {
@@ -326,11 +371,11 @@ public class Turret : Agent
     {
         if (mState != State.Inactive || mState != State.Death)
         {
-            AddReward(1f);
+            AddReward(0.25f);
             tankFriendlyCounter -= 1;
             if (tankFriendlyCounter <= 0)
             {
-                AddReward(5f);
+                AddReward(1f);
                 //dOnTurretWon.Invoke(this);
                 //gameObject.SetActive(false);
                 Debug.Log("Win");
