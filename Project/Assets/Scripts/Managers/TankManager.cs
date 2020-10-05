@@ -16,6 +16,11 @@ public class TankManager : MonoBehaviour
 
     public float friendlyTimer = 2.5f;
     public float enemyTimer = 1.5f;
+    public float _friendlyMoveSpeed=2f;
+    public float _enemyMoveSpeed=2f;
+    public float _reach;
+    public float _spawnDistance;
+
 
     //public float _numTanks;
 
@@ -24,19 +29,11 @@ public class TankManager : MonoBehaviour
         Color.red,
         Color.blue,
     };
-
-    //protected int mPlayerCount;
     protected List<GameObject> mTanks = new List<GameObject>();
-    //protected List<Transform> mSpawnPoints = new List<Transform>();
 
     private void Awake()
     {
-        // Setup the spawn points from spawn parent
-        //Transform spawnTrans = _spawnPointContainer.transform;
-        //for (int i = 0; i < spawnTrans.childCount; i++)
-        //    mSpawnPoints.Add(spawnTrans.GetChild(i));
-        //Spawn(_center,_tankPrefab,false);
-        //SpawnTanks();
+
     }
 
 
@@ -52,10 +49,7 @@ public class TankManager : MonoBehaviour
 
     public void Spawn(Vector3 center, GameObject prefab, bool enemy)
     {
-        //Vector3 pos = RandomCircle(center, 20.0f);
-        // make the object face the center
-        //Quaternion rot = Quaternion.FromToRotation(Vector3.forward, center - pos);
-        Vector3 posLocal = RandomCircle(Vector3.zero, 20.0f);
+        Vector3 posLocal = RandomCircle(Vector3.zero, _spawnDistance);
         Quaternion rotLocal = Quaternion.FromToRotation(Vector3.forward, Vector3.zero - posLocal);
         GameObject tankobj = Instantiate(prefab,this.transform,false);
         tankobj.transform.localPosition = posLocal;
@@ -64,6 +58,7 @@ public class TankManager : MonoBehaviour
         mTanks.Add(tankobj);
 
         Tank tank = tankobj.GetComponent<Tank>();
+        tank._radius = _reach;
 
         if (enemy)
         {
@@ -71,6 +66,8 @@ public class TankManager : MonoBehaviour
             foreach (MeshRenderer rend in renderers)
                 rend.material.color = colors[0];
             tankobj.tag = "EnemyTank";
+            tank._moveSpeed = _enemyMoveSpeed;
+
 
         }
         else
@@ -79,6 +76,8 @@ public class TankManager : MonoBehaviour
             foreach (MeshRenderer rend in renderers)
                 rend.material.color = colors[1];
             tankobj.tag = "FriendlyTank";
+            tank._moveSpeed = _friendlyMoveSpeed;
+
         }
         tank.enemy = enemy;
 
@@ -107,28 +106,11 @@ public class TankManager : MonoBehaviour
         SpawnWrtTimer();
     }
 
-    //public void OnTankDeath(Tank target)
-    //{
-    //    // Reduce the player count and put the dead tank to the back of the list
-    //    mPlayerCount--;
-    //    mTanks.Remove(target);
-    //    mTanks.Add(target);
-
-    //    // If it is the last tank standing, call delegate to announce the winner
-    //    if(mPlayerCount == 1)
-    //    {
-    //        dOnOneTankLeft.Invoke(mTanks[0]); // First tank is always the winner
-    //        mTanks[0]._inputIsEnabled = false;
-    //    }
-    //}
-
     public void Restart()
     {
         foreach (GameObject tank in mTanks)
         {
-            //int num = tank._playerNum;
-            //int num = 0;
-            //tank.Restart(mSpawnPoints[num].position, mSpawnPoints[num].rotation);
+
             if (tank != null)
             {
                 tank.SetActive(false);
@@ -138,43 +120,5 @@ public class TankManager : MonoBehaviour
         }
         friendlyTimer = 2.5f;
         enemyTimer = 1.5f;
-    //mPlayerCount = mTanks.Count;
 }
-
-    // Spawn and setup their color
-    //public void SpawnTanks()
-    //{
-    //    mPlayerCount = mSpawnPoints.Count;
-
-    //    for (int i = 0; i < mPlayerCount; i++)
-    //    {
-    //        // Spawn Tank and store it
-    //        GameObject tank = Instantiate(_tankPrefab, mSpawnPoints[i].position, mSpawnPoints[i].rotation);
-    //        mTanks.Add(tank.GetComponent<Tank>());
-    //        //mTanks[i]._playerNum = i;
-    //        mTanks[i].dTankDestroyed = OnTankDeath;
-
-    //        // Color Setup
-    //        MeshRenderer[] renderers = mTanks[i].GetComponentsInChildren<MeshRenderer>();
-    //        foreach (MeshRenderer rend in renderers)
-    //            rend.material.color = mPlayerColors[i];
-    //    }
-    //}
-
-    //public Transform[] GetTanksTransform()
-    //{
-    //    int count = mTanks.Count;
-    //    Transform[] tanksTrans = new Transform[count];
-    //    for (int i = 0; i < count; i++)
-    //    {
-    //        tanksTrans[i] = mTanks[i].transform;
-    //    }
-
-    //    return tanksTrans;
-    //}
-
-    //public int NumberOfPlayers
-    //{
-    //    get { return mSpawnPoints.Count; }
-    //}
 }

@@ -1,0 +1,23 @@
+{
+    "Turret": {
+        "checkpoints": [
+            {
+                "steps": 22617,
+                "file_path": "results\\Turret_30\\Turret\\Turret-22617.nn",
+                "reward": null,
+                "creation_time": 1601688593.5905252
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 22617,
+            "file_path": "results\\Turret_30\\Turret.nn",
+            "reward": null,
+            "creation_time": 1601688593.5905252
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.1.0",
+        "mlagents_version": "0.20.0",
+        "tensorflow_version": "2.3.1"
+    }
+}

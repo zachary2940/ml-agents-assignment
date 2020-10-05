@@ -92,9 +92,12 @@ public class Turret : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(mTurretShot._cooldown); //3 for vector 3
+        sensor.AddObservation(mTurretShot.mCooldownCounter); 
         //sensor.AddObservation(this.transform.localPosition);
         sensor.AddObservation(transform.localRotation);
+        sensor.AddObservation(tankFFCounter);
+        sensor.AddObservation(tankFriendlyCounter);
+
         //1 vector actions
         sensor.AddObservation(mRigidbody.angularVelocity.magnitude); //1
         //Vector3 angularMomentum = new Vector3(
@@ -143,6 +146,7 @@ public class Turret : Agent
 
         if (vectorAction[1] == 1)
         {
+            AddReward(-0.0001f);
             FireInput();
         }
         else if (vectorAction[1] == 0)
@@ -179,11 +183,11 @@ public class Turret : Agent
         {
             actionsOut[0] = 2;
         }
-        else if (Input.GetKey(KeyCode.Q))
+        else if (Input.GetKey(KeyCode.S))
         {
             actionsOut[0] = 3;
         }
-        if (Input.GetKey(KeyCode.E))
+        if (Input.GetKey(KeyCode.Space))
         {
             actionsOut[1] = 1;
         }
@@ -241,17 +245,7 @@ public class Turret : Agent
         }
     }
 
-    //protected void MovementInput()
-    //{
-    //    // Update input
-    //    //mVerticalInputValue = Input.GetAxis(mVerticalAxisInputName);
-    //    mHorizontalInputValue = Input.GetAxis(mHorizontalAxisInputName);
-
-    //    // Check movement and change states according to it
-    //    if (Mathf.Abs(mHorizontalInputValue) > 0.1f)
-    //        state = State.Moving;
-    //    else state = State.Idle;
-    //}
+   
     protected void FireInput()
     {
 
@@ -259,18 +253,11 @@ public class Turret : Agent
         {
             FireRay();
         }
-        //fire shots
-    //    if (Input.GetButton(mFireInputName))
-    //    {
-    //        if (mTurretShot.Fire()) //returns shell/true
-    //        {
-    //            FireRay();
-    //        }
-    //    }
     }
 
     protected void FireRay()
     {
+
         RaycastHit hit;
         // Does the ray intersect any objects excluding the player layer
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit,50, _layerMask))
@@ -280,12 +267,14 @@ public class Turret : Agent
             if (tank.tag == "FriendlyTank")
             {
                 Debug.Log("Hit Friendly");
-                AddReward(-0.5f); // the lower it is the more pain
+                AddReward(-0.75f + -0.25f * (_maxFFCounter - tankFFCounter)); // the lower it is the more pain
                 tankFFCounter -= 1;
                 if (tankFFCounter <= 0)
                 {
                     AddReward(-1f); // the lower it is the more pain
-                    Debug.Log("Lose");
+                    Debug.Log("Lose: Hit Friendly");
+
+
                     EndEpisode();
                     _tankManager.Restart();
                     Restart();
@@ -299,9 +288,8 @@ public class Turret : Agent
                 Debug.Log("Hit Enemy");
 
             }
-            AddReward(0.1f);
+            //AddReward(0.05f);
             tank.SetActive(false);
-            Debug.Log("Did Hit");
         }
         else
         {
@@ -310,43 +298,15 @@ public class Turret : Agent
         }
     }
 
-    //protected void ChangeMovementAudio(AudioClip clip)
-    //{
-    //    if (_movementSFX.clip != clip)
-    //    {
-    //        _movementSFX.clip = clip;
-    //        _movementSFX.pitch = mOriginalPitch + Random.Range(-_pitchRange, _pitchRange);
-    //        _movementSFX.Play();
-    //    }
-    //}
-    //protected void PlaySFX(AudioClip clip)
-    //{
-    //    _tankSFX.clip = clip;
-    //    _tankSFX.pitch = mOriginalPitch + Random.Range(-_pitchRange, _pitchRange);
-    //    _tankSFX.Play();
-    //}
+
 
     // Physic update. Update regardless of FPS
     void FixedUpdate()
     {
-        //Move();
-        //Rotate();
+
     }
 
-    // Move the tank based on speed
-    //public void Move()
-    //{
-    //    Vector3 moveVect = transform.forward * _moveSpeed * Time.deltaTime * mVerticalInputValue;
-    //    mRigidbody.MovePosition(mRigidbody.position + moveVect);
-    //}
 
-    // Rotate the tank
-    //public void Rotate()
-    //{
-    //    float rotationDegree = _rotationSpeed * Time.deltaTime * mHorizontalInputValue;
-    //    Quaternion rotQuat = Quaternion.Euler(0f, rotationDegree, 0f);
-    //    mRigidbody.MoveRotation(mRigidbody.rotation * rotQuat);
-    //}
 
     public void AbsorbEnemyTank()
     {
@@ -358,7 +318,8 @@ public class Turret : Agent
                 AddReward(-1f);
                 //dOnTurretDestroyed.Invoke(this);
                 gameObject.SetActive(false);
-                Debug.Log("Lose");
+                Debug.Log("Lose: Absorb Enemy");
+
                 EndEpisode();
                 _tankManager.Restart();
                 Restart();
@@ -367,11 +328,16 @@ public class Turret : Agent
         }
     }
 
+    public void DebugLose()
+    {
+
+    }
+
     public void AbsorbFriendlyTank()
     {
         if (mState != State.Inactive || mState != State.Death)
         {
-            AddReward(0.25f);
+            AddReward(0.4f);
             tankFriendlyCounter -= 1;
             if (tankFriendlyCounter <= 0)
             {

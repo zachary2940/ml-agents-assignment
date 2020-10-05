@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class Tank : MonoBehaviour
 {
-    public float _moveSpeed=2f;
+    public float _moveSpeed;
     public LayerMask _layerMask;
-    public float _radius = 2.5f;
+    public float _radius;
 
 
     //public float _rotationSpeed;

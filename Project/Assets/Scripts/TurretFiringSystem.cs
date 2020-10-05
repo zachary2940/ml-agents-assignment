@@ -15,7 +15,7 @@ public class TurretFiringSystem : MonoBehaviour
     }
     protected State mState = State.ReadyToFire;
 
-    protected float mCooldownCounter;
+    public float mCooldownCounter;
 
     private void Start()
     {

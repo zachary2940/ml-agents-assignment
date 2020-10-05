@@ -684,6 +684,7 @@ MonoBehaviour:
   _shellPrefab: {fileID: 5204955365232478723, guid: 568c4d887383b55409d4855e3228b738,
     type: 3}
   _spawnPoint: {fileID: 482793051333797799}
+  mCooldownCounter: 0
 --- !u!114 &3765252927884928793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -697,12 +698,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 6
+    VectorObservationSize: 11
     NumStackedVectorObservations: 1
     VectorActionSize: 0300000002000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 11400000, guid: 41713b0977ab862458900834ac241de2, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: Turret
@@ -726,7 +727,7 @@ MonoBehaviour:
   m_DetectableTags:
   - EnemyTank
   - FriendlyTank
-  m_RaysPerDirection: 24
+  m_RaysPerDirection: 32
   m_MaxRayDegrees: 180
   m_SphereCastRadius: 0.5
   m_RayLength: 20

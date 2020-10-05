@@ -1,0 +1,2 @@
+model_checkpoint_path: "Turret-7814.ckpt"
+all_model_checkpoint_paths: "Turret-7814.ckpt"

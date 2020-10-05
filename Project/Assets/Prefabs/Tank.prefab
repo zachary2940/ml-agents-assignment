@@ -270,11 +270,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 135f79ed8e8825948bc5229e7686e33e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 2
+  _moveSpeed: 0
   _layerMask:
     serializedVersion: 2
     m_Bits: 512
-  _radius: 2
+  _radius: 2.5
   _movementSFX: {fileID: 8628096002447358649}
   _tankSFX: {fileID: 3528250256390878877}
   _clipIdle: {fileID: 8300000, guid: e2522bde119563c419b553267d5da2bb, type: 3}
